@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
+#include <string.h>
+#include <time.h>
 #define BYTES_RUIDO 7
 
 int main() {
@@ -28,3 +29,4 @@ int main() {
 
     return EXIT_SUCCESS;
 }
+

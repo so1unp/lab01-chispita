@@ -28,3 +28,9 @@ int main() {
 
     return EXIT_SUCCESS;
 }
+
+/**
+ * para compilar el programa, se puede usar el siguiente comando:
+ * make (depende si lo tenemos instalado) pararse en directorio del proyecto y ejecutar el comando.
+ * 
+ */

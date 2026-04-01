@@ -16,6 +16,7 @@ int main() {
             ssize_t n = read(0, buffer + total_leido, TAMANO_BLOQUE - total_leido);
 
             if (n == 0) goto fin; 
+            if (n < 0) {
                 perror("Error al leer");
                 exit(EXIT_FAILURE);
             }

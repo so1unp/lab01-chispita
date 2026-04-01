@@ -7,23 +7,35 @@
 
 int main(int argc, char *argv[])
 {
-
-    if (argc < 2) {
-        return EXIT_FAILURE; // el programa termina sin errores si no hay argumentos
-    }
+    char entrada[100]; 
+    int cantCaracteres;
+    char *mensaje; // texto a encriptar
 
     srand(time(NULL));
 
-    int caracteres = strlen(argv[1]); // cantidad de bytes/carácteres en el string del argumento (si el argumento es "hola" entonces caracteres=4)
-    char *caracter = argv[1]; // apuntador de cada carácter del string del argumento
-
-    for(int i=0; i<caracteres; i++){
-        for(int j=0; j<BYTES; j++){
-            char byte = rand() % 256; // carácter aleatorio
-            write(1, &byte, 1); // se escribe carácter aleatorio (con write() me aseguro que trabajo con bytes puros)
+    /*---- si no hay argumento, el texto se escribirá por entrada estándar ----*/
+    if (argc < 2) {
+        cantCaracteres = read(0, entrada, sizeof(entrada)); // cantidad de bytes (o caracteres) del texto
+        
+        if(entrada[cantCaracteres-1] == '\n'){
+            cantCaracteres--; // al presionar enter read() también lee el salto de línea como un carácter más, con esto me aseguro de borrarlo
         }
-        write(1, &caracter[i], 1); // se escribe carácter por carácter hasta que no hayan más (h-o-l-a) luego de escribir los 7 bytes alteatorios
+
+        mensaje = entrada;
+
+    /*---- si el texto fue escrito desde la línea de comando ----*/
+    } else {
+        cantCaracteres = strlen(argv[1]);
+        mensaje = argv[1];
     }
-    
+
+    for(int i=0; i<cantCaracteres; i++){
+        for(int j=0; j<BYTES; j++){ // acá se imprimen los 7 bytes falsos
+            char byte = (rand() % 95) + 33;
+            write(1, &byte, 1);
+        }
+        write(1, &mensaje[i], 1); // y acá se imprime el byte real, caracter por caracter
+    }
+    write(1, "\n", 1);
     exit(EXIT_SUCCESS);
 }

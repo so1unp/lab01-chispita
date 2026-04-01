@@ -1,32 +1,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <string.h>
-#include <time.h>
-#define BYTES_RUIDO 7
+#define BYTES_RUIDO 7 
+// El bloque total es ruido + el caracter real
+#define TAMANO_BLOQUE (BYTES_RUIDO + 1) 
 
 int main() {
-    char buffer[BYTES_RUIDO + 1];
-    ssize_t bytes_leidos;
+    char buffer[TAMANO_BLOQUE];
+    ssize_t total_leido;
 
-    while ((bytes_leidos = read(0, buffer, BYTES_RUIDO + 1)) > 0) {
-        
-        // solo entra si leyó el bloque completo de 8 bytes
-        if (bytes_leidos == (BYTES_RUIDO + 1)) {
-            // escribe el octavo byte en la salida estándar (1)
-            if (write(1, &buffer[BYTES_RUIDO], 1) == -1) {
-                perror("Error al escribir");
+    while (1) {
+        total_leido = 0;
+
+        // Bucle para asegurar que completamos el bloque de 8 bytes
+        while (total_leido < TAMANO_BLOQUE) {
+            ssize_t n = read(0, buffer + total_leido, TAMANO_BLOQUE - total_leido);
+
+            if (n == 0) goto fin; // Fin del archivo
+            if (n < 0) {
+                perror("Error al leer");
                 exit(EXIT_FAILURE);
             }
+            total_leido += n;
         }
+        
+        // Escribimos el último byte del bloque (el real)
+        // Usamos el índice BYTES_RUIDO porque es la posición 7 (la octava)
+        write(1, &buffer[BYTES_RUIDO], 1);
     }
 
-    // perror dice si ocurrió algún error
-    if (bytes_leidos == -1) {
-        perror("Error al leer de la entrada estándar");
-        exit(EXIT_FAILURE);
-    }
-
-    return EXIT_SUCCESS;
+fin:
+    return 0;
 }
-
